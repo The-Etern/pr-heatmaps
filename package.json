@@ -1,0 +1,13 @@
+{
+  "name": "pr-heatmaps",
+  "version": "1.0.0",
+  "description": "Heatmaps and automatic analysis for Project Reality (.PRdemo) matches, 100% in the browser",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "author": "TheEtern",
+  "scripts": {
+    "test": "node --test",
+    "bump": "sh scripts/bump-version.sh"
+  }
+}

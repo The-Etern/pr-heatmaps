@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR Heatmaps</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2326292d'/%3E%3Crect x='13.5' y='13.5' width='5' height='5' fill='%23d6a13a'/%3E%3Cg fill='%238a9097'%3E%3Crect x='13.5' y='7' width='5' height='5'/%3E%3Crect x='7' y='13.5' width='5' height='5'/%3E%3Crect x='20' y='13.5' width='5' height='5'/%3E%3Crect x='13.5' y='20' width='5' height='5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="4" fill="#26292d"/><rect x=".5" y=".5" width="31" height="31" rx="3.5" fill="none" stroke="#444a50"/><g fill="#6b7178"><rect x="7" y="7" width="5" height="5"/><rect x="13.5" y="7" width="5" height="5" fill="#8a9097"/><rect x="20" y="7" width="5" height="5"/><rect x="7" y="13.5" width="5" height="5" fill="#8a9097"/><rect x="13.5" y="13.5" width="5" height="5" fill="#d6a13a"/><rect x="20" y="13.5" width="5" height="5" fill="#8a9097"/><rect x="7" y="20" width="5" height="5"/><rect x="13.5" y="20" width="5" height="5" fill="#8a9097"/><rect x="20" y="20" width="5" height="5"/></g></svg>
+    <div>
+      <h1>PR Heatmaps</h1>
+      <p data-i18n="app.subtitle"></p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span id="status" role="status" aria-live="polite"></span>
+    <div id="lang" class="seg" role="group" data-i18n-aria="lang"></div>
+    <label class="btn primary" for="file" data-i18n="open"></label>
+    <input id="file" type="file" accept=".PRdemo,.prdemo,.png,.jpg,.jpeg,.webp" multiple hidden>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="panel controls">
+    <section class="card">
+      <h2 data-i18n="sec.matches"></h2>
+      <label for="map" data-i18n="map"></label>
+      <select id="map"></select>
+      <ul id="demoList" class="demo-list"></ul>
+      <button class="btn ghost small-btn" id="clearAll" type="button" data-i18n="clearAll" hidden></button>
+      <p class="hint" data-i18n="matches.hint"></p>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="sec.layer"></h2>
+      <div id="layers" class="layers"></div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="sec.filters"></h2>
+      <div class="row">
+        <div><label for="team" data-i18n="team"></label><select id="team"></select></div>
+        <div id="roleWrap"><label for="role" data-i18n="kit"></label><select id="role"></select></div>
+        <div id="vclassWrap" hidden><label for="vclass" data-i18n="vehicle"></label><select id="vclass"></select></div>
+      </div>
+      <div id="ageWrap"><label for="minAge" data-i18n="minAge"></label><select id="minAge"></select></div>
+      <label class="check"><input type="checkbox" id="tk" checked> <span data-i18n="includeTK"></span></label>
+
+      <div class="field-head"><label for="t0" data-i18n="window"></label><output id="tOut"></output></div>
+      <div class="dual" id="dual">
+        <div class="dual-fill" id="dualFill"></div>
+        <input type="range" id="t0" min="0" max="1000" value="0" data-i18n-aria="window.start">
+        <input type="range" id="t1" min="0" max="1000" value="1000" data-i18n-aria="window.end">
+      </div>
+      <div class="row buttons">
+        <button class="btn" id="play" type="button"></button>
+        <button class="btn ghost" id="resetT" type="button" data-i18n="wholeMatch"></button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="sec.display"></h2>
+      <div class="field-head"><label for="radius" data-i18n="smoothing"></label><output id="radiusOut"></output></div>
+      <input type="range" id="radius" min="0" max="12" step="0.5" value="3">
+      <div class="field-head"><label for="opacity" data-i18n="opacity"></label><output id="opacityOut"></output></div>
+      <input type="range" id="opacity" min="10" max="100" value="80">
+      <div class="row">
+        <div><label for="scale" data-i18n="scale"></label>
+          <select id="scale"><option value="sqrt" data-i18n="scale.sqrt"></option><option value="linear" data-i18n="scale.linear"></option><option value="log" data-i18n="scale.log"></option></select></div>
+        <div><label for="cmap" data-i18n="colors"></label>
+          <select id="cmap"><option value="inferno">Inferno</option><option value="viridis">Viridis</option></select></div>
+      </div>
+      <div class="chips" role="group" data-i18n-aria="overlays">
+        <label class="chip"><input type="checkbox" id="ovFlags" checked><span data-i18n="ov.flags"></span></label>
+        <label class="chip"><input type="checkbox" id="ovFobs"><span data-i18n="ov.fobs"></span></label>
+        <label class="chip"><input type="checkbox" id="ovCaches"><span data-i18n="ov.caches"></span></label>
+      </div>
+    </section>
+  </aside>
+
+  <section class="stage">
+    <div class="stage-head">
+      <div>
+        <h2 id="layerTitle"></h2>
+        <p id="layerHelp" class="hint"></p>
+      </div>
+      <div class="team-key" id="teamKey"></div>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <div class="map-box" id="mapBox">
+        <canvas id="map-canvas" tabindex="0" data-i18n-aria="map.aria"></canvas>
+        <div class="legend glass">
+          <canvas id="legend" width="200" height="10" aria-hidden="true"></canvas>
+          <div class="legend-labels"><span></span><span id="legendMax"></span></div>
+          <div id="legendUnit" class="legend-unit"></div>
+        </div>
+        <div class="tools glass" role="group">
+          <button id="zoomIn" type="button" data-i18n-aria="map.zoomIn" data-i18n-title="map.zoomIn">+</button>
+          <button id="zoomOut" type="button" data-i18n-aria="map.zoomOut" data-i18n-title="map.zoomOut">−</button>
+          <button id="resetView" type="button" data-i18n-aria="map.resetView" data-i18n-title="map.resetView">⤢</button>
+          <button id="savePng" type="button" data-i18n-aria="map.save" data-i18n-title="map.save">⤓</button>
+        </div>
+        <div id="tip" class="tip glass" hidden></div>
+        <div class="map-hint glass" data-i18n="map.hint"></div>
+        <div id="drop" class="drop" role="group">
+          <div class="drop-inner">
+            <svg class="drop-icon" viewBox="0 0 32 32" aria-hidden="true"><g fill="#6b7178"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7" fill="#8a9097"/><rect x="22" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7" fill="#8a9097"/><rect x="13" y="13" width="7" height="7" fill="#d6a13a"/><rect x="22" y="13" width="7" height="7" fill="#8a9097"/><rect x="4" y="22" width="7" height="7"/><rect x="13" y="22" width="7" height="7" fill="#8a9097"/><rect x="22" y="22" width="7" height="7"/></g></svg>
+            <h2 data-i18n="drop.title"></h2>
+            <p data-i18n="drop.sub"></p>
+            <label class="btn primary" for="file" data-i18n="drop.button"></label>
+            <p class="drop-privacy" data-i18n="drop.privacy"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel analysis">
+    <h2 class="big" data-i18n="an.title"></h2>
+    <div id="kpis" class="kpis"></div>
+
+    <section class="card">
+      <h3 data-i18n="an.findings"></h3>
+      <ul id="insights" class="insights"></ul>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="an.phases"></h3>
+      <canvas id="chPhases" class="chart" data-h="130"></canvas>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="an.tickets"></h3>
+      <canvas id="chTickets" class="chart" data-h="130"></canvas>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="an.distance"></h3>
+      <div id="distBars" class="bars"></div>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="an.weapons"></h3>
+      <div id="weapons" class="bars"></div>
+    </section>
+
+    <section class="card">
+      <h3 data-i18n="an.flags"></h3>
+      <div id="flagBars" class="bars"></div>
+    </section>
+  </aside>
+</main>
+<footer class="credits">
+  <span><span data-i18n="credit.by"></span> <b>TheEtern</b> · <a href="https://github.com/The-Etern" target="_blank" rel="noopener">github.com/The-Etern</a></span>
+  <span><span data-i18n="credit.based"></span> <a href="https://github.com/yossizap/realitytracker" target="_blank" rel="noopener">realitytracker</a> (GPL-3.0)</span>
+  <a href="https://github.com/The-Etern/pr-heatmaps" target="_blank" rel="noopener" data-i18n="credit.code"></a>
+</footer>
+<div id="dragOverlay" class="drag-overlay" hidden><div data-i18n="drop.overlay"></div></div>
+<script type="module" src="src/ui.js?v=1"></script>
+</body>
+</html>
